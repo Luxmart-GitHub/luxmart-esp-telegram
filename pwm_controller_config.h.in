@@ -1,0 +1,16 @@
+#ifndef PWM_CONTROLLER_CONFIG_H
+#define PWM_CONTROLLER_CONFIG_H
+
+// Replace with your network credentials
+const char* ssid = "TODO";
+const char* password = "TODO";
+
+// Initialize Telegram BOT
+#define BOT_TOKEN "1234567890:TODO"  // your Bot Token (Get from Botfather)
+
+// Use @myidbot to find out the chat ID of an individual or a group
+// Also, you need to click "start" on a bot before it can
+// message you
+#define CHAT_ID "TODO"
+
+#endif // PWM_CONTROLLER_CONFIG_H
