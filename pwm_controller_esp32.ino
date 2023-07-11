@@ -33,6 +33,8 @@ public :
   {
     if (millis() > lastTimeBotRan + botRequestDelay)
     {
+      DBGLOG("iterate\n\r");
+
       digitalWrite(LED_BUILTIN, state);
       state ^= LED_HIGH;
 
@@ -88,6 +90,9 @@ public :
 
         char returnedValue;  
         auto result = executeCommand(command, extraArg, &returnedValue);
+        String error("Error: command \"");
+        error += command;
+        error += "\" ";
         switch (result)
         {
         case NoReturnedValue :
@@ -96,20 +101,23 @@ public :
           bot.sendMessage(chat_id, String(returnedValue), "");
           break;
         case ErrorCommandNotRecognized :
-          bot.sendMessage(chat_id, "Error: command not recognized", "");
+          bot.sendMessage(chat_id, error + "not recognized", "");
           break;
         case ErrorCommandArgumentMissing :
-          bot.sendMessage(chat_id, "Error: command not executed, because a required argument is missing");
+          bot.sendMessage(chat_id, error + "not executed, because a required argument is missing");
+          break;
+        case ErrorCommandTimedout :
+          bot.sendMessage(chat_id, error + "could not execute (or return a value) for too long");
           break;
         default :
-          bot.sendMessage(chat_id, "Error: unexpected command result");
+          bot.sendMessage(chat_id, error + "has unexpected result");
         }
       }
     }
   }
 };
 
-UserControl* userControl;
+static UserControl* userControl;
 
 void pwm_controller_setup()
 {

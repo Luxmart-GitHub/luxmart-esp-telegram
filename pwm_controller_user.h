@@ -3,6 +3,10 @@
 
 class UserControl
 {
+  // When we read from ATTiny85, give up in case of
+  // repeated failure.
+  int maxSerialReadRetries = 3;
+
 public :
 
   UserControl() { }
@@ -12,7 +16,7 @@ public :
   // Execute the given command on the ATTiny85 PWM controller.
   // Some commands may need an extra argument.
   // Some commands return a value, which is transferred back to the user.
-  ReturnedValue executeCommand(char command, char* extraArg, char* result)
+  virtual ReturnedValue executeCommand(char command, char* extraArg, char* result)
   {
     // Iterate through all known commands.
     for (int j = 0; j < sizeof(descriptions) / sizeof(descriptions[0]); j++)
@@ -41,14 +45,26 @@ public :
       {
         // First char is a type of return value,
         // for example 'v' for the current value of PWM level.
+        // So we read it, and then overwrite with by reading the actual value.
+        bool success;
         for (int ichar = 0; ichar < 2; ichar++)
         {
           // TODO Do not wait infinitely, give up after some time
-          while (!pwmSerial.available())
+          success = false;
+          for (int i = 0; i < maxSerialReadRetries; i++)
+          {
+            if (pwmSerial.available())
+            {
+              success = true;
+              *result = pwmSerial.read();
+              break;
+            }
             delay(1000);
-
-          *result = pwmSerial.read();
+          }
         }
+
+        if (!success)
+          return ErrorCommandTimedout;
       }
 
       // Notify whether there is a value returned by command.
@@ -67,6 +83,8 @@ void setup()
 {
   setupSerial();
 
+  DBGLOG("setup\n\r");
+
   setupWiFi();
 
   pwm_controller_setup();
@@ -77,8 +95,6 @@ void setup()
 
 void loop()
 {
-  DBGLOG("loop");
-
   pwm_controller_loop();
 }
 

@@ -23,6 +23,7 @@ enum ReturnedValue
   ReturnsValue,
   ErrorCommandNotRecognized,
   ErrorCommandArgumentMissing,
+  ErrorCommandTimedout,
 };
 
 struct Description

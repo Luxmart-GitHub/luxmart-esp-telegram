@@ -4,7 +4,12 @@
 #define RX_PIN 2
 #define TX_PIN 3
 #define SERIAL_BAUD_RATE 9600
+#define DEBUG_SERIAL_BAUD_RATE 115200
 
+// Enable this macro to have DBGLOG() outputs into the hardware serial port.
+// For example, in case of esp8266 the GPIO1 and GPIO3 should be the Serial TX and RX pins.
+// Note: if outputs are not printed into the serial output, reset the device
+// (or its adapter), while keeping the serial console open.
 //#define DEBUG
 
 #ifdef DEBUG
@@ -29,7 +34,7 @@
 #include <SoftwareSerial.h>
 SoftwareSerial pwmSerial(RX_PIN, TX_PIN);
 #ifdef DEBUG
-#define debugSerial pwmSerial
+#define debugSerial Serial
 #endif
 #endif
 
@@ -43,9 +48,8 @@ SoftwareSerial pwmSerial(RX_PIN, TX_PIN);
 static void setupSerial()
 {
 #ifdef DEBUG
-  debugSerial.begin(SERIAL_BAUD_RATE);
+  debugSerial.begin(DEBUG_SERIAL_BAUD_RATE);
 #endif
-  DBGLOG("setup");
 #ifdef DEBUG
   if (pwmSerial != debugSerial)
 #endif
