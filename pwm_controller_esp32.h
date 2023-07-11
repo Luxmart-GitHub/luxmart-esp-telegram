@@ -1,21 +1,19 @@
 #ifndef PWM_CONTROLLER_ESP32_H
 #define PWM_CONTROLLER_ESP32_H
 
-#define RX_PIN 2
-#define TX_PIN 3
-#define SERIAL_BAUD_RATE 9600
-#define DEBUG_SERIAL_BAUD_RATE 115200
-
 // Enable this macro to have DBGLOG() outputs into the hardware serial port.
 // For example, in case of esp8266 the GPIO1 and GPIO3 should be the Serial TX and RX pins.
-// Note: if outputs are not printed into the serial output, reset the device
-// (or its adapter), while keeping the serial console open.
+// Note: if outputs are not printed into the serial output, make sure BAUD_RATE is correct,
+// and reset the device (or its adapter), while keeping the serial console open.
 //#define DEBUG
 
 #ifdef DEBUG
-#define DBGLOG(msg) debugSerial.write(msg)
+// Since debug serial and command serial could use the same serial bus, we prepend
+// logging messages with '#' to indicate that subsequent characters
+// are not a command. Logging message continues until the carriage return symbol.
+#define DBGLOG(msg) do { Serial.write("#"); Serial.write(msg); Serial.write("\n\r"); } while (0)
 #else
-#define DBGLOG(msg)
+#define DBGLOG(msg) do { } while (0)
 #endif
 
 #ifdef ESP32
@@ -24,18 +22,14 @@
 #include <WiFi.h>
 #include <HardwareSerial.h>
 #define pwmSerial Serial
-#ifdef DEBUG
-#define debugSerial Serial1
-#endif
 #else
 #define LED_LOW LOW
 #define LED_HIGH HIGH
 #include <ESP8266WiFi.h>
 #include <SoftwareSerial.h>
+#define RX_PIN 1
+#define TX_PIN 3
 SoftwareSerial pwmSerial(RX_PIN, TX_PIN);
-#ifdef DEBUG
-#define debugSerial Serial
-#endif
 #endif
 
 #include <WiFiClientSecure.h>
@@ -47,15 +41,9 @@ SoftwareSerial pwmSerial(RX_PIN, TX_PIN);
 
 static void setupSerial()
 {
-#ifdef DEBUG
-  debugSerial.begin(DEBUG_SERIAL_BAUD_RATE);
-#endif
-#ifdef DEBUG
-  if (pwmSerial != debugSerial)
-#endif
-  {
-    pwmSerial.begin(SERIAL_BAUD_RATE);
-  }
+  Serial.begin(BAUD_RATE);
+  if (pwmSerial != Serial)
+    pwmSerial.begin(BAUD_RATE);
 }
 
 static void setupWiFi()

@@ -3,8 +3,8 @@
 // All generic code is  moved into the header files below.
 
 #include "pwm_controller_config.h"
-#include "pwm_controller_esp32.h"
 #include "pwm_controller_commands.h"
+#include "pwm_controller_esp32.h"
 #include "pwm_controller_user.h"
 
 class TelegramUserControl : public UserControl
@@ -33,7 +33,7 @@ public :
   {
     if (millis() > lastTimeBotRan + botRequestDelay)
     {
-      DBGLOG("iterate\n\r");
+      DBGLOG("iterate");
 
       digitalWrite(LED_BUILTIN, state);
       state ^= LED_HIGH;
@@ -81,6 +81,14 @@ public :
         }
         bot.sendMessage(chat_id, welcome, "");
       }
+      else if (text == "/p")
+      {
+#if 0
+        DBGLOG("Rebooting...");
+        bot.sendMessage(chat_id, "Device will now reboot!", "");
+        ESP.restart();
+#endif
+      }
       else if (text.length() > 1)
       {
         char command = text[1];
@@ -98,7 +106,8 @@ public :
         case NoReturnedValue :
           break;
         case ReturnsValue :
-          bot.sendMessage(chat_id, String(returnedValue), "");
+          bot.sendMessage(chat_id, String("") + static_cast<unsigned int>(
+            *reinterpret_cast<unsigned char*>(&returnedValue)), "");
           break;
         case ErrorCommandNotRecognized :
           bot.sendMessage(chat_id, error + "not recognized", "");

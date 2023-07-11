@@ -83,7 +83,7 @@ void setup()
 {
   setupSerial();
 
-  DBGLOG("setup\n\r");
+  DBGLOG("setup");
 
   setupWiFi();
 

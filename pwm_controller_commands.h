@@ -1,6 +1,10 @@
 #ifndef PWM_CONTROLLER_COMMANDS_H
 #define PWM_CONTROLLER_COMMANDS_H
 
+// The Serial baud rate used for command communication
+// between ESP 01S and ATTiny85.
+#define BAUD_RATE 9600
+
 enum Command
 {
   CommandStepUp = 'u',
@@ -9,6 +13,16 @@ enum Command
   CommandGetValue = 'r',
   CommandSetMax = 'm',
   CommandSetMin = '0',
+  CommandReboot = 'p',
+  CommandGetState = 's',
+  NoCommandUntilCarriageReturn = '#' 
+};
+
+enum State
+{
+  NormalState = 0,
+  RebootRequested = 1,
+  FactoryResetRequested = 2
 };
 
 enum ExtraArgument
@@ -72,6 +86,12 @@ static const Description descriptions[] =
     NoReturnedValue,
     "Set PWM to minimum value",
   },
+  {
+    CommandReboot,
+    NoExtraArgument,
+    NoReturnedValue,
+    "Reboot the device"
+  }
 };
 
 #endif // PWM_CONTROLLER_COMMANDS_H
