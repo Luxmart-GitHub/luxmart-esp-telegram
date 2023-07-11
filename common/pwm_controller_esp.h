@@ -34,11 +34,6 @@ SoftwareSerial pwmSerial(RX_PIN, TX_PIN);
 
 #include <WiFiClientSecure.h>
 
-// Universal Telegram Bot Library written by Brian Lough:
-// https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot
-#include <UniversalTelegramBot.h>
-#include <ArduinoJson.h>
-
 static void setupSerial()
 {
   Serial.begin(BAUD_RATE);

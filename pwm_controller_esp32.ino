@@ -3,9 +3,14 @@
 // All generic code is  moved into the header files below.
 
 #include "pwm_controller_config.h"
-#include "pwm_controller_commands.h"
-#include "pwm_controller_esp32.h"
-#include "pwm_controller_user.h"
+#include "api/pwm_controller_commands.h"
+#include "common/pwm_controller_esp.h"
+#include "common/pwm_controller_user.h"
+
+// Universal Telegram Bot Library written by Brian Lough:
+// https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot
+#include <UniversalTelegramBot.h>
+#include <ArduinoJson.h>
 
 class TelegramUserControl : public UserControl
 {
