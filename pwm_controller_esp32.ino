@@ -88,8 +88,8 @@ public :
       }
       else if (text == "/p")
       {
-#if 0
         DBGLOG("Rebooting...");
+#if 0
         bot.sendMessage(chat_id, "Device will now reboot!", "");
         ESP.restart();
 #endif
